@@ -1,0 +1,188 @@
+---
+title: "Lab 02 - Plastic waste"
+author: "YooRi"
+date: "Insert date here"
+output: github_document
+---
+
+## Load packages and data
+
+```{r load-packages, message=FALSE}
+library(tidyverse) 
+```
+
+```{r load-data, message=FALSE}
+plastic_waste <- read_csv("data/plastic-waste.csv")
+glimpse(plastic_waste)
+View(plastic_waste)
+```
+
+## Exercises
+
+warm up: NA=missing data
+
+### Exercise 1
+
+TTO is the highest on their plastic_waste_per_cap
+
+
+```{r plastic-waste-continent}
+ggplot(data=plastic_waste, aes(x=plastic_waste_per_cap))+
+  geom_histogram(bindwidth=0.2)
+
+ggplot(data = plastic_waste, aes(x = plastic_waste_per_cap)) +
+  geom_density()
+
+plastic_waste %>%
+  filter(plastic_waste_per_cap>3.5)%>%
+  View()
+
+ggplot(data=plastic_waste, aes(x=plastic_waste_per_cap))+
+  geom_histogram(bindwidth=0.2)+
+  facet_wrap(~continent)
+
+ggplot(data = plastic_waste, 
+       mapping = aes(x = plastic_waste_per_cap, 
+                     color = continent)) +
+  geom_density()
+  
+
+ggplot(data = plastic_waste, 
+       mapping = aes(x = plastic_waste_per_cap, 
+                     color = continent, 
+                     fill = continent)) +
+  geom_density(alpha=0.5)
+  
+```
+
+### Exercise 2
+
+it can cover other graph in the back layer. 
+so, if we can make somewhat transparent, we can see the back layer. 
+
+```{r plastic-waste-density}
+
+ggplot(data = plastic_waste, 
+       mapping = aes(x = plastic_waste_per_cap, 
+                     color = continent, 
+                     fill = continent)) +
+  geom_density(alpha=0.2)
+
+ggplot(data = plastic_waste, 
+       mapping = aes(x = continent, 
+                     y = plastic_waste_per_cap)) +
+  geom_boxplot()
+
+```
+
+### Exercise 3
+
+basic backgrounds on violin plot (since I saw this for the first time:D)
+
+( if the following contains incorrect information, let me know plz..)
+
+violin graph is symmetric, mirroring the estimation of Kernel Density Estimation (KDE)--to my understanding, it can be used to smooth the histogram. 
+
+with this plot, we can visualize the range of data distribution--especially, more close to a real data distribution. 
+
+box plot has more apparent in median, 1rd/3rd quantile
+
+reference: R graphics cookbook, author = winston chang 
+
+```{r}
+ggplot(data = plastic_waste, 
+       mapping = aes(x = continent, 
+                     y = plastic_waste_per_cap)) +
+  geom_violin()
+
+# let's twist little more :D
+
+
+ggplot(data = plastic_waste, 
+       mapping = aes(x = continent, 
+                     y = plastic_waste_per_cap)) +
+  geom_violin()+
+  geom_boxplot(width=.3, fill="green")+
+  stat_summary(fun.y=median, geom="point")
+
+
+```
+
+### Exercise 4
+
+it seems that it has positive relationship (4-1)
+yea, it seems a little. (4-2)
+not really (4-3)
+
+
+```{r plastic-waste-violin}
+#4-1
+ggplot(data = plastic_waste, 
+       mapping = aes(x = plastic_waste_per_cap, 
+                     y = mismanaged_plastic_waste_per_cap))+
+  geom_point()
+
+#4-2
+ggplot(data = plastic_waste, 
+       mapping = aes(x = plastic_waste_per_cap, 
+                     y = mismanaged_plastic_waste_per_cap,
+                     color=continent))+
+  geom_point() #+
+  #stat_smooth(method=lm)
+
+#4-3
+ggplot(data = plastic_waste, 
+       mapping = aes(x = plastic_waste_per_cap, 
+                     y = total_pop))+
+  geom_point()
+
+ggplot(data = plastic_waste, 
+       mapping = aes(x = plastic_waste_per_cap, 
+                     y = coastal_pop))+
+  geom_point()
+
+#4-3-2 XD
+ggplot(data = plastic_waste, 
+       mapping = aes(x = plastic_waste_per_cap, 
+                     y = total_pop))+
+  geom_point()+
+  stat_smooth(method=lm)
+
+
+ggplot(data = plastic_waste, 
+       mapping = aes(x = plastic_waste_per_cap, 
+                     y = coastal_pop))+
+  geom_point()+
+  stat_smooth(method=lm)
+
+```
+
+### Exercise 5
+
+change background color/grid line color of the plot
+references:http://www.sthda.com/english/wiki/ggplot2-themes-and-background-colors-the-3-elements
+
+
+```{r}
+plastic_waste$cp_prop<-
+  plastic_waste$coastal_pop/plastic_waste$total_pop
+
+plastic_waste %>%
+  filter(plastic_waste_per_cap<3)%>%
+  ggplot(mapping = aes(x =cp_prop,
+                     y = plastic_waste_per_cap,
+                     ))+
+  geom_point(aes(color=continent,))+
+  stat_smooth(color="black")+
+  scale_colour_viridis_d()+
+  labs(title="plastic waste vs. coastal poplualtion portion",
+       subtitle="by continent",
+       x="Coastal population proportion(Coastal/total population)",
+       y="Plastic waste per capita")+
+  theme_minimal()
+
+
+```
+
+
+reference: R graphics cookbook, author = winston chang 
