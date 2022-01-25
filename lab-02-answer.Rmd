@@ -12,7 +12,7 @@ library(tidyverse)
 ```
 
 ```{r load-data, message=FALSE}
-plastic_waste <- read_csv("data/plastic-waste.csv")
+plastic_waste <- read.csv("data/plastic-waste.csv")
 glimpse(plastic_waste)
 View(plastic_waste)
 ```
@@ -28,7 +28,7 @@ TTO is the highest on their plastic_waste_per_cap
 
 ```{r plastic-waste-continent}
 ggplot(data=plastic_waste, aes(x=plastic_waste_per_cap))+
-  geom_histogram(bindwidth=0.2)
+  geom_histogram(bandwidth=0.2)
 
 ggplot(data = plastic_waste, aes(x = plastic_waste_per_cap)) +
   geom_density()
@@ -37,9 +37,7 @@ plastic_waste %>%
   filter(plastic_waste_per_cap>3.5)%>%
   View()
 
-ggplot(data=plastic_waste, aes(x=plastic_waste_per_cap))+
-  geom_histogram(bindwidth=0.2)+
-  facet_wrap(~continent)
+
 
 ggplot(data = plastic_waste, 
        mapping = aes(x = plastic_waste_per_cap, 
@@ -52,13 +50,18 @@ ggplot(data = plastic_waste,
                      color = continent, 
                      fill = continent)) +
   geom_density(alpha=0.5)
+
+ggplot(data=plastic_waste, aes(x=plastic_waste_per_cap))+
+  geom_histogram()+
+  facet_wrap(~continent)
   
 ```
 
 ### Exercise 2
 
 it can cover other graph in the back layer. 
-so, if we can make somewhat transparent, we can see the back layer. 
+so, if we can make somewhat transparent, we can see the back layer.
+color and fill can give us intuitive information. 
 
 ```{r plastic-waste-density}
 
